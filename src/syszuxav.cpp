@@ -42,7 +42,7 @@ class SYSZUXav {
 
 class SYSZUXCamera : public SYSZUXav {
     public:
-        SYSZUXCamera(const std::string &url = "", int thread_count = 0) : SYSZUXav("", thread_count){}
+        SYSZUXCamera(const std::string &url = "", int thread_count = 0) : SYSZUXav(url, thread_count){}
 };
 
 Matrix SYSZUXav::decodeJpg()

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
-#include <libswscale/swscale_internal.h>
+#include <libswscale/swscale.h>
 //gcc -c -fPIC -L/opt/ffmpeg/lib -I/opt/ffmpeg/include/ ffmpeg.c -lavcodec -lavformat -lavfilter -lavdevice -lswresample -lswscale -lavutil -o ffmpeg.o
 void logging(const char *fmt, ...);
 // decode packets into frames
@@ -16,7 +16,7 @@ uint8_t* decode();
 /////////////global start////////////
 AVFormatContext *pFormatContext = 0;
 AVCodecContext *pCodecContext = 0;
-SwsContext* swsContext = 0;
+struct SwsContext* swsContext = 0;
 AVFrame *pFrame = 0;
 AVFrame* dstframe = 0; 
 AVPacket *pPacket = 0;
