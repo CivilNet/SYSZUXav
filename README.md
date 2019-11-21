@@ -42,3 +42,14 @@ while True:
   count += 1
 ```
 
+# Docker Image
+You can pull a pre-built docker image from Docker Hub and run with
+```bash
+docker run -it --rm gemfield/syszuxav_build bash
+```
+
+Dockerfile is also supplied to build images on Ubuntu 16.04
+```bash
+cd docker
+docker build  -t gemfield/syszuxav_build -f Dockerfile.syszuxav_build .
+```
