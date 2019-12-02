@@ -8,5 +8,5 @@ g++ -O3 -Wall -shared -std=c++11 syszuxav.cpp -fPIC `python -m pybind11 --includ
 cd ..
 cp src/*.so syszuxav/
 
-python setup.py sdist upload
+#python setup.py sdist upload
 
