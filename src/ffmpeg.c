@@ -78,12 +78,11 @@ int initav(const char* url, int thread_count){
             pCodec = pLocalCodec;
             pCodecParameters = pLocalCodecParameters;
             logging("Video Codec: resolution %d x %d", pLocalCodecParameters->width, pLocalCodecParameters->height);
+            // print its name, id and bitrate
+            logging("\tCodec %s ID %d bit_rate %lld", pLocalCodec->name, pLocalCodec->id, pCodecParameters->bit_rate);
         } else if (pLocalCodecParameters->codec_type == AVMEDIA_TYPE_AUDIO) {
             logging("Audio Codec: %d channels, sample rate %d", pLocalCodecParameters->channels, pLocalCodecParameters->sample_rate);
         }
-
-        // print its name, id and bitrate
-        logging("\tCodec %s ID %d bit_rate %lld", pLocalCodec->name, pLocalCodec->id, pCodecParameters->bit_rate);
     }
 
     pCodecContext = avcodec_alloc_context3(pCodec);
