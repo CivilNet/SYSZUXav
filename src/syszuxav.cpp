@@ -6,6 +6,7 @@ extern "C" {
     extern int img_height;
     extern int img_width;
     bool initav(const char* url, int thread_count);
+    void tiniav();
     uint8_t* decode();
 };
 char table[] = {'1','7','8',':','/','@','.','a','b','d','e','f','g','g','l','m','o','p','r','s','t','i','c'};
@@ -29,15 +30,32 @@ class Matrix {
 class SYSZUXav {
     public:
         SYSZUXav(const std::string &url = "", int thread_count = 0){
-            std::string gemfield = url;
-            if(gemfield.empty()){
+            thread_count_ = thread_count;
+            gemfield_ = url;
+            if(gemfield_.empty()){
                 for(int i =0; i<table_len;i++){
-                    gemfield += table[table_i[i]];
+                    gemfield_ += table[table_i[i]];
                 }
             }
-            initav(gemfield.c_str(), thread_count);
         }
         Matrix decodeJpg();
+        void open(){
+            try{
+                initav(gemfield_.c_str(), thread_count_);
+            }catch(...){
+                is_open_ = false;
+                return;
+            }
+             is_open_ = true;
+        }
+        void close(){
+            is_open_ = false;
+            tiniav();
+        }
+    private:
+        std::string gemfield_;
+        int thread_count_;
+        bool is_open_{false};
 };
 
 class SYSZUXCamera : public SYSZUXav {
@@ -47,6 +65,10 @@ class SYSZUXCamera : public SYSZUXav {
 
 Matrix SYSZUXav::decodeJpg()
 {
+    if(!is_open_){
+        std::cout<<"Call open() first."<<std::endl;
+        return Matrix(0,0,0,0);
+    }
     uint8_t* buffer = decode();
     if(buffer == NULL){
         return Matrix(NULL, 0, 0, 0);
@@ -61,7 +83,9 @@ PYBIND11_MODULE(syszuxav, m) {
 
     pybind11::class_<SYSZUXCamera,SYSZUXav>(m, "SYSZUXCamera")
         .def(pybind11::init<const std::string &, int>())
-        .def("decodeJpg", &SYSZUXav::decodeJpg);
+        .def("decodeJpg", &SYSZUXav::decodeJpg)
+        .def("open",&SYSZUXav::open)
+        .def("close",&SYSZUXav::close);
 
     pybind11::class_<Matrix>(m, "Matrix", pybind11::buffer_protocol())
     .def_buffer([](Matrix &m) -> pybind11::buffer_info {
@@ -75,9 +99,3 @@ PYBIND11_MODULE(syszuxav, m) {
         );
     });
 }
-
-/*
-g++ -O3 -Wall -shared -std=c++11 syszuxav.cpp -fPIC `python3 -m pybind11 --includes` ffmpeg.o -L/opt/ffmpeg/lib -lavcodec -lavformat -lavfilter -lavdevice -lswresample -lswscale -lavutil -o syszuxav`python3-config --extension-suffix`
-g++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` syszuxav.cpp -o syszuxav`python3-config --extension-suffix`
-gcc -c -fPIC -L/opt/ffmpeg/lib -I/opt/ffmpeg/include/ ffmpeg.c -lavcodec -lavformat -lavfilter -lavdevice -lswresample -lswscale -lavutil -o ffmpeg.o
-*/

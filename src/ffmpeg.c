@@ -11,7 +11,7 @@ void logging(const char *fmt, ...);
 // decode packets into frames
 uint8_t* decode_packet(AVCodecContext *pCodecContext, AVPacket *pPacket, AVFrame *pFrame);
 int initav(const char* url, int thread_count);
-int tiniav();
+void tiniav();
 uint8_t* decode();
 /////////////global start////////////
 AVFormatContext *pFormatContext = 0;
@@ -139,14 +139,13 @@ uint8_t* decode(){
     return l_buffer;
 }
 
-int tiniav(){
+void tiniav(){
     logging("releasing all the resources");
     avformat_close_input(&pFormatContext);
     avformat_free_context(pFormatContext);
     av_packet_free(&pPacket);
     av_frame_free(&pFrame);
     avcodec_free_context(&pCodecContext);
-    return 0;
 }
 
 void logging(const char *fmt, ...){
